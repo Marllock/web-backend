@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: marcello
+      POSTGRES_PASSWORD: marcello123
+      POSTGRES_DB: animes
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:
