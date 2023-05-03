@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAnimeDto } from './dto/create-anime.dto';
 import { UpdateAnimeDto } from './dto/update-anime.dto';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, ILike } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnimeEntity } from './entities/anime.entity';
 
@@ -11,13 +11,26 @@ export class AnimeService {
     @InjectRepository(AnimeEntity)
     private animeRepository: Repository<AnimeEntity>,
   ) {}
-  create(createAnimeDto: CreateAnimeDto) {
-    return 'This action adds a new anime';
+  async create(createAnimeDto: CreateAnimeDto) {
+    const anime = new AnimeEntity();
+    anime.animeName = createAnimeDto.animeName;
+    anime.animeDescription = createAnimeDto.animeDescription
+
+    return await this.animeRepository.save(anime);
   }
 
   async findAll(search: string) {
-    return await this.animeRepository.findBy({
-      animeName: Like(`%${search}%`),
-    });
+    try {
+      return await this.animeRepository.find({
+        where: {
+          animeName: ILike(`%${search}%`),
+        },
+      });
+    } catch (e) {
+      throw new HttpException(
+        'No vehicle found',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

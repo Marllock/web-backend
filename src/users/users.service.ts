@@ -19,30 +19,30 @@ export class UsersService {
   ) {}
 
   async register(register: CreateUserDto) {
-    this.validateUniqueEmail(register);
+    await this.validateUniqueEmail(register);
 
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(register.password, saltOrRounds);
 
-    let user: UserEntity = new UserEntity();
+    const user: UserEntity = new UserEntity();
 
     user.email = register.email;
     user.password = hash;
 
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+    const userLogged = { sub: user.id, email: user.email };
+    return { accessToken: await this.jwtService.signAsync(userLogged) };
   }
 
-  private validateUniqueEmail(login: CreateUserDto) {
-    this.userRepository
-      .findOneBy({
-        email: login.email,
-      })
-      .then((e) => {
-        if (e) {
-          console.log(e);
-          throw new ConflictException('Email already exists');
-        }
-      });
+  
+  private async validateUniqueEmail(login: CreateUserDto) {
+    const existingUser = await this.userRepository.findOneBy({
+      email: login.email,
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
   }
 
   async login(login: CreateUserDto) {
