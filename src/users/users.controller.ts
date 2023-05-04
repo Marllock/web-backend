@@ -12,6 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoginRequestDto } from './dto/login-request.dto';
 
 @ApiTags('Users Controller')
 @Controller()
@@ -19,9 +20,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: LoginRequestDto })
   @Post('/login')
-  login(@Body() login: CreateUserDto) {
+  login(@Body() login: LoginRequestDto) {
     return this.usersService.login(login);
   }
 
