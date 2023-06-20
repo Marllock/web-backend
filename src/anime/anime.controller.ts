@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Logger,
   Body,
   Query,
   HttpCode,
@@ -9,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { AnimeService } from './anime.service';
 import { CreateAnimeDto } from './dto/create-anime.dto';
-import { UpdateAnimeDto } from './dto/update-anime.dto';
 import { ApiBody, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { AnimeEntity } from './entities/anime.entity';
+import { sanitize } from 'class-sanitizer';
+
 
 @ApiTags('Animes Controller')
 @Controller('anime')
@@ -33,6 +35,11 @@ export class AnimeController {
   @ApiOkResponse({ type: [AnimeEntity] })
   @Get()
   async findAll(@Query('search') search = '') {
-    return await this.animeService.findAll(search);
+    try {
+      sanitize(search);
+      return await this.animeService.findAll(search);
+    } catch (e) {
+      Logger.error('failed to find animes');
+    }
   }
 }
