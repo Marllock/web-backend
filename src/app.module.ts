@@ -17,6 +17,9 @@ import { UserEntity } from './users/entities/user.entity';
       password: 'marcello123',
       database: 'animes',
       entities: [AnimeEntity, UserEntity],
+      extra: {
+        connectionLimit: 5,
+      },
       synchronize: true,
     }),
     AnimeModule,
