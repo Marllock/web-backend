@@ -7,14 +7,16 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { AnimeService } from './anime.service';
 import { CreateAnimeDto } from './dto/create-anime.dto';
 import { ApiBody, ApiTags, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
 import { AnimeEntity } from './entities/anime.entity';
 import { sanitize } from 'class-sanitizer';
+import { AuthGuard } from 'src/users/guard/auth.guard';
 
-
+@UseGuards(AuthGuard)
 @ApiTags('Animes Controller')
 @Controller('anime')
 export class AnimeController {
