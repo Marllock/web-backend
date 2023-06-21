@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { CreateAnimeDto } from './dto/create-anime.dto';
 import { Repository, Like, ILike } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,28 +13,37 @@ export class AnimeService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(AnimeEntity)
     private animeRepository: Repository<AnimeEntity>,
-  ) {}
+  ) { }
+
+  @Client({
+    transport: Transport.RMQ,
+    options: {
+      queue: 'create_anime_queue',
+      urls: ['amqp://marcello:123@localhost=:5672'],
+      queueOptions: {
+        durable: false,
+      },
+    },
+  })
+  private rabitmqClient: ClientProxy;
+
   async create(createAnimeDto: CreateAnimeDto) {
     await this.cacheManager.del('anime')
-    const anime = new AnimeEntity();
-    anime.animeName = createAnimeDto.animeName;
-    anime.animeDescription = createAnimeDto.animeDescription
-
-    return await this.animeRepository.save(anime);
+    this.rabitmqClient.emit('anime', createAnimeDto);
   }
 
   async findAll(search: string) {
     try {
       const cache = await this.cacheManager.get('anime')
-      if (cache){
+      if (cache) {
         return cache;
       }
-       const response = await this.animeRepository.find({
+      const response = await this.animeRepository.find({
         where: {
           animeName: ILike(`%${search}%`),
         },
       });
-      await this.cacheManager.set('anime',response)
+      await this.cacheManager.set('anime', response)
     } catch (e) {
       throw new HttpException(
         'No vehicle found',
