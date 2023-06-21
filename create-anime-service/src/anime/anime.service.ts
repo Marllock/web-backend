@@ -3,20 +3,24 @@ import { CreateAnimeDto } from './dto/create-anime.dto';
 import { AnimeEntity } from './entities/anime.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AnimeGateway } from './anime-notification-gateway';
 
 @Injectable()
 export class AnimeService {
-  
+
   constructor(
     @InjectRepository(AnimeEntity)
     private animeRepository: Repository<AnimeEntity>,
-  ) {}
+    private readonly notificationService: AnimeGateway,
+
+  ) { }
   async create(createAnimeDto: CreateAnimeDto) {
     const anime = new AnimeEntity();
     anime.animeName = createAnimeDto.animeName;
     anime.animeDescription = createAnimeDto.animeDescription
 
-    return await this.animeRepository.save(anime);
+    await this.animeRepository.save(anime);
+    this.notificationService.sendNotification();
   }
 
 }
