@@ -10,7 +10,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       queue: 'create_anime_queue',
-      urls: ['amqp://marcello:123@localhost=:5672'],
+      urls: ['amqp://marcello:123@localhost:5672'],
       queueOptions: {
         durable: false,
       },
