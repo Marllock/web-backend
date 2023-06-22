@@ -7,8 +7,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync('/cert/private.key'),
-    cert: fs.readFileSync('/cert/certificate.crt'),
+    key: fs.readFileSync('src/cert/private.key'),
+    cert: fs.readFileSync('src/cert/certificate.crt'),
   };
   const app = await NestFactory.create(AppModule, { httpsOptions});
   app.useGlobalPipes(
