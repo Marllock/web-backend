@@ -6,11 +6,12 @@ import * as fs from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
+  
   const httpsOptions = {
     key: fs.readFileSync('src/cert/private.key'),
     cert: fs.readFileSync('src/cert/certificate.crt'),
   };
-  const app = await NestFactory.create(AppModule, { httpsOptions});
+  const app = await NestFactory.create(AppModule, { httpsOptions, cors:true});
   app.useGlobalPipes(
     new ValidationPipe({ enableDebugMessages: true, errorHttpStatusCode: 400 }),
   );

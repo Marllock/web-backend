@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateAnimeDto } from './dto/create-anime.dto';
 import { AnimeEntity } from './entities/anime.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,12 +15,17 @@ export class AnimeService {
 
   ) { }
   async create(createAnimeDto: CreateAnimeDto) {
-    const anime = new AnimeEntity();
+    
+    try {
+      const anime = new AnimeEntity();
     anime.animeName = createAnimeDto.animeName;
     anime.animeDescription = createAnimeDto.animeDescription
 
     await this.animeRepository.save(anime);
     this.notificationService.sendNotification();
+    } catch (error) {
+      Logger.error('error save anime bd')
+    }
   }
 
 }

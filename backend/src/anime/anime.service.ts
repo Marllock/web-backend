@@ -19,7 +19,7 @@ export class AnimeService {
     transport: Transport.RMQ,
     options: {
       queue: 'create_anime_queue',
-      urls: ['amqp://marcello:123@localhost=:5672'],
+      urls: ['amqp://marcello:123@localhost:5672'],
       queueOptions: {
         durable: false,
       },
@@ -44,9 +44,10 @@ export class AnimeService {
         },
       });
       await this.cacheManager.set('anime', response)
+      return response
     } catch (e) {
       throw new HttpException(
-        'No vehicle found',
+        'No anime found',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

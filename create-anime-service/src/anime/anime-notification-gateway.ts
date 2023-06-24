@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
     WebSocketGateway,
     WebSocketServer,
@@ -15,19 +16,19 @@ import {
     server: Server;
   
     handleConnection() {
-      console.log('User connected');
+      Logger.log('User connected');
     }
   
     handleDisconnect() {
-      console.log('User disconnected');
+      Logger.log('User disconnected');
     }
   
     afterInit() {
-      console.log('Socket is live');
+      Logger.log('Socket is live');
     }
   
     sendNotification() {
-      this.server.emit('anime notification', { message: 'Anime created successfully' });
-      console.log('emited');
+      this.server.emit('notification', { message: 'Anime created successfully' });
+      Logger.log('emited');
     }
   }
