@@ -8,8 +8,8 @@ export class AnimeController {
   constructor(private readonly animeService: AnimeService) {}
 
   @MessagePattern('anime')
-  create(@Payload() createAnimeDto: CreateAnimeDto) {
-    return this.animeService.create(createAnimeDto);
+  async create(@Payload() createAnimeDto: CreateAnimeDto) {
+   await this.animeService.create(createAnimeDto);
   }
 
 }
