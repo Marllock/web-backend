@@ -8,6 +8,8 @@ import { AnimeEntity } from './anime/entities/anime.entity';
 import { UserEntity } from './users/entities/user.entity';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [ 
@@ -33,8 +35,12 @@ import * as redisStore from 'cache-manager-redis-store';
     }),
     AnimeModule,
     UsersModule,
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 2,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {provide: APP_GUARD, useClass: ThrottlerGuard,}],
 })
 export class AppModule {}
